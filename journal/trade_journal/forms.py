@@ -1,4 +1,5 @@
 from django import forms
+from .models import Trade
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
@@ -47,3 +48,12 @@ class RegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+class TradeForm(forms.ModelForm):
+    class Meta():
+        model = Trade
+        fields = ["image", "outcome", "pair", "profit", "date", "notes"]
+        widgets = {
+            'date': forms.DateInput(
+                attrs={'type': 'date'} # This renders <input type="date">
+            )
+        }

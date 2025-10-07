@@ -1,16 +1,32 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-from .forms import RegistrationForm
+from .forms import RegistrationForm, TradeForm
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+from .models import Trade
 
 # Create your views here.
 def home(request):
-    return render(request, "journal/home.html")
+    if not request.user.is_authenticated:
+         return HttpResponseRedirect(reverse("login"))
+    info = Trade.objects.all()  
+    return render(request, "journal/home.html",{
+         "info": info
+    })
 
 #view handling adding of trades
 def add_trade(request):
-    pass
+    if request.method == "POST":
+        form = TradeForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+    else:
+            form = TradeForm()
+
+    return render(request, "journal/add_trade.html", {
+            "form" : form
+        })
 def reg(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)

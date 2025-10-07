@@ -2,5 +2,10 @@
 {% block body %}
     <div class="container">
         <h1>Add your trades</h1>
+        <form action="{% url 'add_trade' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit">
+        </form>
     </div>
 {% endblock %}
