@@ -1,0 +1,16 @@
+{% extends "journal/layout.html" %}
+{% block body %}
+    <h1>Login to the website</h1>
+    {% if message %}
+        {{ message }}
+    {% endif %}
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="username" id="" placeholder="username">
+        <input type="password" name="password" id="" placeholder="password">
+        <input type="submit">
+    </form>
+    <div>
+        <a href="{% url 'reg' %}"><p>Create account</p></a>
+    </div>
+{% endblock %}
