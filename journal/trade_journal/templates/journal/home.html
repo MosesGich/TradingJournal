@@ -1,21 +1,65 @@
 {% extends "journal/layout.html" %}
 
 {% block body %}
-    <div class="dashboard">
-        Include dashboard
+    <div class="mycon">
+        <div class="row d-flex">
+            <div class="col-4 border-bottom p-3 text-center">
+                <h3>Welcome {{ request.user.username }}</h3>
+                <div>
+                    <a href="{% url 'logout' %}" class="fw-bold text-danger">Logout</a>
+                </div>
+            </div>
+            <div class="col-4 border-bottom p-3 text-center">
+                {% if netprofit > 0  %}
+                    <p class="fw-bold label">Netprofit</p>
+                    <strong class="win"> +{{ netprofit| default:"0.00" }}$</strong>
+                {% else %}
+                    <p class="fw-bold label">Netprofit</p>
+                    <strong class="loss">{{ netprofit| default:"0.00" }}$</strong>
+                {% endif %}
+            </div>
+            <div class="col-4 border-bottom p-3 text-center">
+                <p class="label fw-bold">Winrate</p>
+                <strong class="win">{{ winrate }}%</strong>
+            </div>
+        </div>  
     </div>
-    <div class="add_trade">
-        <a href="{% url 'add_trade' %}">+Add Trade</a>
-    </div>
+    
     <div class="container">
-        <h3>Trade details</h3>
+        <div class="container-flex">
+            <div class="row mt-3 text-end">
+                <div class="add_trade">
+                    <a href="{% url 'add_trade' %}"><button class="btn btn-primary">Add Trade</button></a>
+                </div>
+            </div> 
+        </div>
+        <h3 class="text-center">Your Saved Trades</h3>
         {% for data in info %}
-            <img src="{{ data.image.url }}" alt="{{ data.pair }}">
-            <p>{{ data.pair }}</p>
-            <p>{{ data.profit }}</p>
-        {% endfor %}
-        
-        <p>Lorem ipsum dolor sit amet.</p>
+            <div class="row border rounded p-3 mx-4 mb-4 mycard">
+                <div class="text-start"> 
+                    <div class="mydiv p-2 d-inline-block">
+                        <p class="mytext mb-0">Trade {{ data.id }}</p>
+                    </div>
+                </div>
+                
+                <div class="col-12 text-center">
+                    <img src="{{ data.image.url }}" alt="{{ data.pair }}" class="img-fluid rounded-top shadow-lg" style="width: 700px; height: auto;">
+                    <div class="d-flex justify-content-center align-items-center py-2 border-bottom border-3 mb-2">
+                        <h4 class="fw-bold text-primary mx-4">Pair: {{ data.pair }}</h4>
+                        {% if data.profit > 0 %}
+                            <h4 class="fw-bold text-success">Profit: {{ data.profit }}$</h4>
+                        {% else %}
+                            <h4 class="fw-bold text-danger">Loss: {{ data.profit }}$</h4>
+                        {% endif %}
+                        <h4 class="fw-bold text-success mx-4">{{ data.date }}</h4>
+                    </div>
+                    <h4 class="fw-bold text-primary text-center">Notes</h4>
+                    <p class="text-secondary">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis, non.</p>
+                </div>
+            </div>
+        {% empty %} 
+            <p class="fw-bold text-danger text-center">No Trades Yet</p>
+        {% endfor %} 
     </div>
 
 {% endblock %}

@@ -1,4 +1,6 @@
+from django.db.models import Sum, Count, Case, When, FloatField
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from .forms import RegistrationForm, TradeForm
 from django.urls import reverse
@@ -9,17 +11,49 @@ from .models import Trade
 def home(request):
     if not request.user.is_authenticated:
          return HttpResponseRedirect(reverse("login"))
-    info = Trade.objects.all()  
-    return render(request, "journal/home.html",{
-         "info": info
-    })
+    info = Trade.objects.filter(user=request.user).order_by('-id')
+    #calculate profit data
+    profit_data = info.aggregate(
+         net_profit = Sum("profit")
+    )
+    net_profit = profit_data["net_profit"] if profit_data["net_profit"] is not None else 0
+
+    #calculate the win rate
+    total_trades = info.count()
+    win_rate = 0.0
+    context = {
+              "winrate": win_rate,
+              "netprofit": net_profit,
+              "info": info,
+              }
+
+    if total_trades > 0:
+         win_count = info.aggregate(
+              wins = Count(
+                  Case(
+                     When(outcome="WIN", then=1 ),
+                     output_field= FloatField()
+                  ) 
+              )
+         )
+         win_count = win_count["wins"]
+
+         win_rate = (win_count/total_trades) * 100
+         context['netprofit'] = net_profit
+         context['winrate'] = round(win_rate, 2)
+
+         
+    return render(request, "journal/home.html", context)
 
 #view handling adding of trades
+@login_required
 def add_trade(request):
     if request.method == "POST":
         form = TradeForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            photo_instance = form.save(commit=False)
+            photo_instance.user = request.user
+            photo_instance.save()
             return redirect("home")
     else:
             form = TradeForm()
@@ -51,4 +85,8 @@ def login_view(request):
                return render(request, "journal/login.html", {
                    "message" : "Invalid credentials"
                })
+     return render(request, "journal/login.html")
+
+def logout_view(request):
+     logout(request)
      return render(request, "journal/login.html")
