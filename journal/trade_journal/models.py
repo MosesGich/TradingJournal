@@ -8,7 +8,6 @@ result = [
 ]
 class Trade(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="photos/")
     outcome = models.CharField(
         max_length=4,
         choices=result,
@@ -23,3 +22,14 @@ class Trade(models.Model):
 
     def __str__(self):
         return f"{self.pair} {self.profit} {self.outcome}"
+    
+class TradePhoto(models.Model):
+    trade = models.ForeignKey(
+        Trade,
+        on_delete= models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="photos/")
+
+    def __str__(self):
+        return f"Image for {self.trade.pair}"

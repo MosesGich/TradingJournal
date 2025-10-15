@@ -27,3 +27,18 @@
     font-size: 30px;
     color: red; 
 }
+.linktxt {
+    font-size: 20px;
+    text-decoration: none;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    /* Filter turns the dark icon light/white */
+    filter: invert(100%); 
+}
+.carousel-control-prev,
+.carousel-control-next {
+    width: 15%; /* Make the clickable area wider */
+    background: rgba(0, 0, 0, 0.2); /* Semi-transparent dark background */
+    opacity: 1; /* Ensure controls are fully visible */
+}

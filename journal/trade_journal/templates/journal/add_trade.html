@@ -1,11 +1,35 @@
 {% extends "journal/layout.html" %}
 {% block body %}
     <div class="container">
-        <h1>Add your trades</h1>
-        <form action="{% url 'add_trade' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
-        </form>
+        <div class="row text-center mb-3">
+            <h1 class="text-primary">Add your trades</h1>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-12 my-4 d-inline-block border bg-light">
+            <form action="{% url 'add_trade' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {{ formset.management_form }}
+
+                    {% for images in formset %}
+                        <div class="image-field">
+                            {{ images.image.label_tag }}
+                            {{ images.image }}
+                            {% for error in images.image.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <a href="{% url 'home' %}"><button class="btn btn-primary">See Trades</button></a>
+        </div>
+        
+        
     </div>
 {% endblock %}

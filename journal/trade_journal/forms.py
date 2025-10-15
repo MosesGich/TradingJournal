@@ -1,6 +1,7 @@
 from django import forms
-from .models import Trade
+from .models import Trade, TradePhoto
 from django.contrib.auth import get_user_model
+from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
@@ -51,9 +52,17 @@ class RegistrationForm(UserCreationForm):
 class TradeForm(forms.ModelForm):
     class Meta():
         model = Trade
-        fields = ["image", "outcome", "pair", "profit", "date", "notes"]
+        fields = ["outcome", "pair", "profit", "date", "notes"]
         widgets = {
             'date': forms.DateInput(
                 attrs={'type': 'date'} # This renders <input type="date">
             )
         }
+
+Trade_image_form = inlineformset_factory(
+    parent_model=Trade,
+    model= TradePhoto,
+    fields=("image",),
+    extra=3,
+    max_num=3,
+)

@@ -1,16 +1,33 @@
 {% extends "journal/layout.html" %}
 {% block body %}
-    <h1>Login to the website</h1>
-    {% if message %}
-        {{ message }}
-    {% endif %}
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="username" id="" placeholder="username">
-        <input type="password" name="password" id="" placeholder="password">
-        <input type="submit">
-    </form>
-    <div>
-        <a href="{% url 'reg' %}"><p>Create account</p></a>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <h1 class="text-success text-center">Login to the website</h1>
+            {% if message %}
+                {{ message }}
+            {% endif %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card p-4 shadow">
+                    <div class="card-title text-center text-success fw-bold mb-4 ">Enter credentials</div>
+                    <form action="{% url 'login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="fw-bold text-primary form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pass" class="fw-bold text-primary form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="pass" placeholder="password">
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Log In</button>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <a href="{% url 'reg' %}"><p>Create account</p></a>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

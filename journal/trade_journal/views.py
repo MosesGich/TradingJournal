@@ -2,10 +2,11 @@ from django.db.models import Sum, Count, Case, When, FloatField
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from .forms import RegistrationForm, TradeForm
+from .forms import RegistrationForm, TradeForm, Trade_image_form
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from .models import Trade
+from django.db import transaction 
 
 # Create your views here.
 def home(request):
@@ -49,17 +50,24 @@ def home(request):
 @login_required
 def add_trade(request):
     if request.method == "POST":
-        form = TradeForm(request.POST, request.FILES)
-        if form.is_valid():
-            photo_instance = form.save(commit=False)
-            photo_instance.user = request.user
-            photo_instance.save()
-            return redirect("home")
+        form = TradeForm(request.POST)
+        formset = Trade_image_form(request.POST, request.FILES)
+        if form.is_valid and formset.is_valid():
+            with transaction.atomic():
+                photo_instance = form.save(commit=False)
+                photo_instance.user = request.user
+                photo_instance.save()
+
+                formset.instance = photo_instance
+                formset.save()
+                return redirect("home")
     else:
             form = TradeForm()
+            formset = Trade_image_form()
 
     return render(request, "journal/add_trade.html", {
-            "form" : form
+            "form" : form,
+            "formset" : formset
         })
 def reg(request):
     if request.method == "POST":
